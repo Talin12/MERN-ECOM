@@ -3,9 +3,9 @@ const dotenv = require('dotenv');
 const cors = require('cors');
 const connectDB = require('./config/db');
 const productRoutes = require('./routes/productRoutes');
+const { notFound, errorHandler } = require('./middleware/errorMiddleware.js');
 
 dotenv.config();
-
 connectDB();
 
 const app = express();
@@ -17,13 +17,15 @@ app.get('/', (req, res) => {
   res.send('API is running...');
 });
 
-// This line tells the server to use the routes defined in productRoutes.js
-// for any request that starts with '/api/products'
+// Use the product routes
 app.use('/api/products', productRoutes);
 
-const PORT = process.env.PORT || 5000;
+// --- Error Handling Middleware (MUST be last) ---
+app.use(notFound);
+app.use(errorHandler);
+
+const PORT = process.env.PORT || 5050; // Ensure this is 5050 if that's what you're using
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
-
