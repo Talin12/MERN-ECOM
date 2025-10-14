@@ -8,7 +8,7 @@ const getProducts = async (req, res, next) => {
     const products = await Product.find({});
     res.json(products);
   } catch (error) {
-    next(error); // Pass error to our custom error handler
+    next(error);
   }
 };
 
@@ -17,6 +17,7 @@ const getProducts = async (req, res, next) => {
 // @access  Public
 const getProductById = async (req, res, next) => {
   try {
+    // This uses the database model to find the product
     const product = await Product.findById(req.params.id);
 
     if (product) {
@@ -26,7 +27,7 @@ const getProductById = async (req, res, next) => {
       throw new Error('Product not found');
     }
   } catch (error) {
-    next(error); // Pass error to our custom error handler
+    next(error);
   }
 };
 

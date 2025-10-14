@@ -17,14 +17,13 @@ app.get('/', (req, res) => {
   res.send('API is running...');
 });
 
-// Use the product routes
 app.use('/api/products', productRoutes);
 
-// --- Error Handling Middleware (MUST be last) ---
+// Error handling middleware should be last
 app.use(notFound);
 app.use(errorHandler);
 
-const PORT = process.env.PORT || 5050; // Ensure this is 5050 if that's what you're using
+const PORT = process.env.PORT || 5050;
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
