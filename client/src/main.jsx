@@ -15,6 +15,8 @@ import ProductPage from './pages/ProductPage.jsx';
 import CartPage from './pages/CartPage.jsx'; 
 import LoginPage from './pages/LoginPage.jsx';
 import RegisterPage from './pages/RegisterPage.jsx'
+import PrivateRoute from './components/PrivateRoute.jsx';
+import ProfilePage from './pages/ProfilePage.jsx';
 import './index.css';
 
 const router = createBrowserRouter([
@@ -27,6 +29,13 @@ const router = createBrowserRouter([
       { path: 'cart', element: <CartPage /> }, 
       { path: 'login', element: <LoginPage /> },
       { path: 'register', element: <RegisterPage /> },
+      {
+        path: '',
+        element: <PrivateRoute />,
+        children: [
+          { path: 'profile', element: <ProfilePage /> },
+        ],
+      },
     ],
   },
 ]);
