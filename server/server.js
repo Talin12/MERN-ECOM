@@ -1,11 +1,11 @@
-import path from 'path';
-import express from 'express';
-import dotenv from 'dotenv';
-import cors from 'cors';
-import connectDB from './config/db.js';
-import productRoutes from './routes/productRoutes.js';
-import userRoutes from './routes/userRoutes.js'; // --- NEW ---
-import { notFound, errorHandler } from './middleware/errorMiddleware.js';
+const path = require('path');
+const express = require('express');
+const dotenv = require('dotenv');
+const cors = require('cors');
+const connectDB = require('./config/db.js');
+const productRoutes = require('./routes/productRoutes.js');
+const userRoutes = require('./routes/userRoutes.js');
+const { notFound, errorHandler } = require('./middleware/errorMiddleware.js');
 
 dotenv.config();
 connectDB();
@@ -19,11 +19,9 @@ app.get('/', (req, res) => {
   res.send('API is running...');
 });
 
-// Use the product and user routes
 app.use('/api/products', productRoutes);
-app.use('/api/users', userRoutes); // --- NEW ---
+app.use('/api/users', userRoutes);
 
-// Error handling middleware
 app.use(notFound);
 app.use(errorHandler);
 
