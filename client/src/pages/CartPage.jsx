@@ -4,8 +4,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Row, Col, ListGroup, Image, Form, Button, Card } from 'react-bootstrap';
 import Message from '../components/Message.jsx';
 import { updateCartQuantity, removeFromCart } from '../redux/cartSlice.js';
+import { useNavigate } from 'react-router-dom';
 
 const CartPage = () => {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const { cartItems } = useSelector((state) => state.cart);
 
@@ -15,6 +17,10 @@ const CartPage = () => {
 
   const removeFromCartHandler = (id) => {
     dispatch(removeFromCart(id));
+  };
+
+  const checkoutHandler = () => {
+    navigate('/login?redirect=/shipping'); // Redirect to login, then shipping
   };
 
   return (
@@ -82,6 +88,7 @@ const CartPage = () => {
                 type="button"
                 className="w-100"
                 disabled={cartItems.length === 0}
+                onClick={checkoutHandler} // Add this handler
               >
                 Proceed to Checkout
               </Button>

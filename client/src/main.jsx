@@ -17,6 +17,8 @@ import LoginPage from './pages/LoginPage.jsx';
 import RegisterPage from './pages/RegisterPage.jsx'
 import PrivateRoute from './components/PrivateRoute.jsx';
 import ProfilePage from './pages/ProfilePage.jsx';
+import ShippingPage from './pages/ShippingPage.jsx';
+import PaymentPage from './pages/PaymentPage.jsx';
 import './index.css';
 
 const router = createBrowserRouter([
@@ -34,6 +36,8 @@ const router = createBrowserRouter([
         element: <PrivateRoute />,
         children: [
           { path: 'profile', element: <ProfilePage /> },
+          { path: 'shipping', element: <ShippingPage /> },
+          { path: 'payment', element: <PaymentPage /> },
         ],
       },
     ],
