@@ -12,7 +12,9 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import App from './App.jsx';
 import HomePage from './pages/HomePage.jsx';
 import ProductPage from './pages/ProductPage.jsx';
-import CartPage from './pages/CartPage.jsx'; // --- NEW --- Import CartPage
+import CartPage from './pages/CartPage.jsx'; 
+import LoginPage from './pages/LoginPage.jsx';
+import RegisterPage from './pages/RegisterPage.jsx'
 import './index.css';
 
 const router = createBrowserRouter([
@@ -22,7 +24,9 @@ const router = createBrowserRouter([
     children: [
       { index: true, element: <HomePage /> },
       { path: 'product/:id', element: <ProductPage /> },
-      { path: 'cart', element: <CartPage /> }, // --- NEW --- Add Cart Route
+      { path: 'cart', element: <CartPage /> }, 
+      { path: 'login', element: <LoginPage /> },
+      { path: 'register', element: <RegisterPage /> },
     ],
   },
 ]);
