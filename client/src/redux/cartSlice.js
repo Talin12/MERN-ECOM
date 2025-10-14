@@ -1,6 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-// Get cart items from localStorage if they exist, otherwise start with an empty array
 const initialState = localStorage.getItem('cart')
   ? JSON.parse(localStorage.getItem('cart'))
   : { cartItems: [] };
@@ -20,13 +19,25 @@ const cartSlice = createSlice({
       } else {
         state.cartItems = [...state.cartItems, item];
       }
-
-      // Save the updated cart to localStorage
+      localStorage.setItem('cart', JSON.stringify(state));
+    },
+    // --- NEW --- Reducer to update item quantity
+    updateCartQuantity: (state, action) => {
+        const { _id, qty } = action.payload;
+        const itemToUpdate = state.cartItems.find((item) => item._id === _id);
+        if (itemToUpdate) {
+            itemToUpdate.qty = qty;
+        }
+        localStorage.setItem('cart', JSON.stringify(state));
+    },
+    // --- NEW --- Reducer to remove an item from the cart
+    removeFromCart: (state, action) => {
+      state.cartItems = state.cartItems.filter((x) => x._id !== action.payload);
       localStorage.setItem('cart', JSON.stringify(state));
     },
   },
 });
 
-export const { addToCart } = cartSlice.actions;
+export const { addToCart, updateCartQuantity, removeFromCart } = cartSlice.actions;
 
 export default cartSlice.reducer;
