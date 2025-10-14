@@ -1,19 +1,20 @@
 import React from 'react';
-import HomePage from './pages/HomePage';
+import { Outlet } from 'react-router-dom';
+import { Container } from 'react-bootstrap';
+import Header from './components/Header';
+import Footer from './components/Footer';
 
 function App() {
   return (
-    <div>
-      <header>
-        <h1>MERN E-Commerce</h1>
-      </header>
-      <main>
-        <HomePage />
+    <>
+      <Header />
+      <main className="py-3">
+        <Container>
+          <Outlet />
+        </Container>
       </main>
-      <footer>
-        <p>Copyright &copy; MERN E-Commerce</p>
-      </footer>
-    </div>
+      <Footer />
+    </>
   );
 }
 

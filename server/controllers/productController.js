@@ -1,32 +1,22 @@
-const Product = require('../models/productModel');
+// We are temporarily importing the raw data file
+const products = require('../data/products.js');
 
 // @desc    Fetch all products
 // @route   GET /api/products
 // @access  Public
 const getProducts = async (req, res) => {
-  try {
-    const products = await Product.find({});
-    res.json(products);
-  } catch (error) {
-    res.status(500).json({ message: 'Server Error' });
-  }
+  // We send the raw product data directly as a JSON response
+  res.json(products);
 };
 
-// @desc    Fetch a single product by ID
+// @desc    Fetch single product
 // @route   GET /api/products/:id
 // @access  Public
 const getProductById = async (req, res) => {
-  try {
-    const product = await Product.findById(req.params.id);
-
-    if (product) {
-      res.json(product);
-    } else {
-      res.status(404).json({ message: 'Product not found' });
-    }
-  } catch (error) {
-    res.status(500).json({ message: 'Server Error' });
-  }
+  // Find the product that matches the ID from the URL parameter
+  const product = products.find((p) => p._id === req.params.id);
+  res.json(product);
 };
 
 module.exports = { getProducts, getProductById };
+
