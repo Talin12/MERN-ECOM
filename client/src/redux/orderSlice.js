@@ -6,6 +6,7 @@ const initialState = {
   error: null,
   order: null,
   success: false,
+  myOrders: [], // Add myOrders to the initial state
 };
 
 export const createOrder = createAsyncThunk(
@@ -15,13 +16,11 @@ export const createOrder = createAsyncThunk(
       const {
         auth: { userInfo },
       } = getState();
-      // The cookie is sent automatically by the browser, no need for Authorization header
       const config = {
         headers: {
           'Content-Type': 'application/json',
         },
       };
-
       const { data } = await axios.post('/api/orders', order, config);
       return data;
     } catch (error) {
@@ -37,8 +36,23 @@ export const getOrderDetails = createAsyncThunk(
       const {
         auth: { userInfo },
       } = getState();
-      // The cookie is sent automatically
       const { data } = await axios.get(`/api/orders/${id}`);
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || error.message);
+    }
+  }
+);
+
+// New async thunk to get user's orders
+export const getMyOrders = createAsyncThunk(
+  'order/getMyOrders',
+  async (_, { getState, rejectWithValue }) => {
+    try {
+      const {
+        auth: { userInfo },
+      } = getState();
+      const { data } = await axios.get('/api/orders/myorders');
       return data;
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || error.message);
@@ -78,6 +92,18 @@ const orderSlice = createSlice({
         state.order = action.payload;
       })
       .addCase(getOrderDetails.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      // Cases for getting user's orders
+      .addCase(getMyOrders.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(getMyOrders.fulfilled, (state, action) => {
+        state.loading = false;
+        state.myOrders = action.payload;
+      })
+      .addCase(getMyOrders.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });
