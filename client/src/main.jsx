@@ -1,9 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import {
-  createBrowserRouter,
-  RouterProvider,
-} from 'react-router-dom';
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import store from './redux/store';
 
@@ -12,13 +9,14 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import App from './App.jsx';
 import HomePage from './pages/HomePage.jsx';
 import ProductPage from './pages/ProductPage.jsx';
-import CartPage from './pages/CartPage.jsx'; 
+import CartPage from './pages/CartPage.jsx';
 import LoginPage from './pages/LoginPage.jsx';
-import RegisterPage from './pages/RegisterPage.jsx'
+import RegisterPage from './pages/RegisterPage.jsx';
 import PrivateRoute from './components/PrivateRoute.jsx';
 import ProfilePage from './pages/ProfilePage.jsx';
 import ShippingPage from './pages/ShippingPage.jsx';
 import PaymentPage from './pages/PaymentPage.jsx';
+import PlaceOrderPage from './pages/PlaceOrderPage.jsx'; // Import the new page
 import './index.css';
 
 const router = createBrowserRouter([
@@ -28,7 +26,7 @@ const router = createBrowserRouter([
     children: [
       { index: true, element: <HomePage /> },
       { path: 'product/:id', element: <ProductPage /> },
-      { path: 'cart', element: <CartPage /> }, 
+      { path: 'cart', element: <CartPage /> },
       { path: 'login', element: <LoginPage /> },
       { path: 'register', element: <RegisterPage /> },
       {
@@ -38,6 +36,7 @@ const router = createBrowserRouter([
           { path: 'profile', element: <ProfilePage /> },
           { path: 'shipping', element: <ShippingPage /> },
           { path: 'payment', element: <PaymentPage /> },
+          { path: 'placeorder', element: <PlaceOrderPage /> }, // Add the new route
         ],
       },
     ],
