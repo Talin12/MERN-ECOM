@@ -16,7 +16,8 @@ import PrivateRoute from './components/PrivateRoute.jsx';
 import ProfilePage from './pages/ProfilePage.jsx';
 import ShippingPage from './pages/ShippingPage.jsx';
 import PaymentPage from './pages/PaymentPage.jsx';
-import PlaceOrderPage from './pages/PlaceOrderPage.jsx'; // Import the new page
+import PlaceOrderPage from './pages/PlaceOrderPage.jsx';
+import OrderPage from './pages/OrderPage.jsx';
 import './index.css';
 
 const router = createBrowserRouter([
@@ -36,7 +37,8 @@ const router = createBrowserRouter([
           { path: 'profile', element: <ProfilePage /> },
           { path: 'shipping', element: <ShippingPage /> },
           { path: 'payment', element: <PaymentPage /> },
-          { path: 'placeorder', element: <PlaceOrderPage /> }, // Add the new route
+          { path: 'placeorder', element: <PlaceOrderPage /> },
+          { path: 'order/:id', element: <OrderPage /> },
         ],
       },
     ],

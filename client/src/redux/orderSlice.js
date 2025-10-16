@@ -15,15 +15,30 @@ export const createOrder = createAsyncThunk(
       const {
         auth: { userInfo },
       } = getState();
-
+      // The cookie is sent automatically by the browser, no need for Authorization header
       const config = {
         headers: {
           'Content-Type': 'application/json',
-          // The cookie should be sent automatically by the browser
         },
       };
 
       const { data } = await axios.post('/api/orders', order, config);
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || error.message);
+    }
+  }
+);
+
+export const getOrderDetails = createAsyncThunk(
+  'order/getOrderDetails',
+  async (id, { getState, rejectWithValue }) => {
+    try {
+      const {
+        auth: { userInfo },
+      } = getState();
+      // The cookie is sent automatically
+      const { data } = await axios.get(`/api/orders/${id}`);
       return data;
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || error.message);
@@ -36,7 +51,9 @@ const orderSlice = createSlice({
   initialState,
   reducers: {
     resetOrder: (state) => {
+      state.loading = false;
       state.success = false;
+      state.error = null;
     },
   },
   extraReducers(builder) {
@@ -50,6 +67,17 @@ const orderSlice = createSlice({
         state.order = action.payload;
       })
       .addCase(createOrder.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(getOrderDetails.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(getOrderDetails.fulfilled, (state, action) => {
+        state.loading = false;
+        state.order = action.payload;
+      })
+      .addCase(getOrderDetails.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });
