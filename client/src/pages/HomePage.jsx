@@ -19,11 +19,7 @@ const AnimatedText = ({ text, el: Wrapper = 'p', className }) => {
   };
 
   const charVariants = {
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { type: 'spring', damping: 12, stiffness: 100 },
-    },
+    visible: { opacity: 1, y: 0, transition: { type: 'spring', damping: 12, stiffness: 100 } },
     hidden: { opacity: 0, y: 20 },
   };
 
@@ -49,18 +45,11 @@ const HeroSection = () => {
     <div className="relative h-screen w-full overflow-hidden flex items-center justify-center text-center -mt-[88px] pt-[88px]">
       <motion.div
         className="absolute inset-0 bg-cover bg-center z-0"
-        style={{
-          backgroundImage: `url('https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=2899&auto=format&fit=crop')`,
-          y,
-        }}
+        style={{ backgroundImage: `url('https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=2899&auto=format&fit=crop')`, y }}
       />
       <div className="absolute inset-0 bg-black/60 z-10" />
       <div className="z-20 text-white px-4">
-        <AnimatedText
-          text="Where Quality Meets Design"
-          el="h1"
-          className="text-5xl md:text-7xl font-extrabold tracking-tight mb-4"
-        />
+        <AnimatedText text="Where Quality Meets Design" el="h1" className="text-5xl md:text-7xl font-extrabold tracking-tight mb-4" />
         <motion.p
           className="max-w-2xl mx-auto text-lg md:text-xl text-slate-300 mb-8"
           initial={{ opacity: 0, y: 20 }}
@@ -90,31 +79,14 @@ const HomePage = () => {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, amount: 0.1 });
 
-  useEffect(() => {
-    if (status === 'idle') {
-      dispatch(fetchProducts());
-    }
-  }, [status, dispatch]);
-
-  const containerVariants = {
-    hidden: {},
-    visible: {
-      transition: {
-        staggerChildren: 0.1,
-      },
-    },
-  };
+  useEffect(() => { if (status === 'idle') { dispatch(fetchProducts()); } }, [status, dispatch]);
+  const containerVariants = { hidden: {}, visible: { transition: { staggerChildren: 0.1 } } };
 
   return (
     <div className="bg-slate-900 text-white">
       <HeroSection />
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-20">
-        <motion.div 
-          ref={ref}
-          initial={{ opacity: 0, y: 50 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.8 }}
-        >
+        <motion.div ref={ref} initial={{ opacity: 0, y: 50 }} animate={isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.8 }}>
           <h2 className="text-4xl font-bold text-center mb-4">
             Our Products
           </h2>
@@ -123,20 +95,14 @@ const HomePage = () => {
           </p>
         </motion.div>
         
-        {status === 'loading' ? (
-          <Loader />
-        ) : status === 'failed' ? (
-          <Message variant="danger">{error}</Message>
-        ) : (
+        {status === 'loading' ? ( <Loader /> ) : status === 'failed' ? ( <Message variant="danger">{error}</Message> ) : (
           <motion.div
             className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8"
             variants={containerVariants}
             initial="hidden"
             animate={isInView ? "visible" : "hidden"}
           >
-            {products.map((product) => (
-              <Product key={product._id} product={product} />
-            ))}
+            {products.map((product) => ( <Product key={product._id} product={product} /> ))}
           </motion.div>
         )}
       </div>

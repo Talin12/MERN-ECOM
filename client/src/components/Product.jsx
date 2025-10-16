@@ -11,11 +11,6 @@ const Product = ({ product }) => {
     animate: { y: 0, opacity: 1 },
   };
 
-  const overlayVariants = {
-    hidden: { opacity: 0 },
-    visible: { opacity: 1 },
-  };
-
   return (
     <motion.div variants={cardVariants} className="h-full">
       <Card className="group w-full h-full flex flex-col bg-slate-800/50 border-slate-700/50 text-white overflow-hidden shadow-lg transition-all duration-300 hover:border-slate-600 hover:shadow-blue-500/10">
@@ -28,17 +23,10 @@ const Product = ({ product }) => {
             />
           </Link>
           <motion.div
-            className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"
-            variants={overlayVariants}
-            initial="hidden"
-            whileHover="visible"
-            transition={{ duration: 0.5 }}
+            className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"
           />
           <motion.div
-            className="absolute bottom-4 right-4"
-            initial={{ opacity: 0, y: 20 }}
-            whileHover={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3 }}
+            className="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 group-hover:translate-y-0 translate-y-4 transition-all duration-300"
           >
             <Button size="icon" className="bg-blue-600 hover:bg-blue-700 text-white rounded-full h-10 w-10">
               <Plus size={20} />
