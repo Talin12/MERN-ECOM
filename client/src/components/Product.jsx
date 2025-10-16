@@ -1,38 +1,65 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Plus } from 'lucide-react';
 
 const Product = ({ product }) => {
+  const cardVariants = {
+    initial: { y: 50, opacity: 0 },
+    animate: { y: 0, opacity: 1 },
+  };
+
+  const overlayVariants = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1 },
+  };
+
   return (
-    <motion.div whileHover={{ y: -8, transition: { duration: 0.2 } }}>
-      <Card className="w-full h-full flex flex-col overflow-hidden border-2 border-transparent hover:border-blue-500 transition-colors duration-300">
-        <CardHeader className="p-0">
-          <Link to={`/product/${product._id}`}>
-            <div className="aspect-square overflow-hidden">
-              <img
-                src={product.image}
-                alt={product.name}
-                className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-              />
+    <motion.div variants={cardVariants} className="h-full">
+      <Card className="group w-full h-full flex flex-col bg-slate-800/50 border-slate-700/50 text-white overflow-hidden shadow-lg transition-all duration-300 hover:border-slate-600 hover:shadow-blue-500/10">
+        <div className="relative overflow-hidden">
+          <Link to={`/product/${product._id}`} className="block aspect-square">
+            <img
+              src={product.image}
+              alt={product.name}
+              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+            />
+          </Link>
+          <motion.div
+            className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"
+            variants={overlayVariants}
+            initial="hidden"
+            whileHover="visible"
+            transition={{ duration: 0.5 }}
+          />
+          <motion.div
+            className="absolute bottom-4 right-4"
+            initial={{ opacity: 0, y: 20 }}
+            whileHover={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <Button size="icon" className="bg-blue-600 hover:bg-blue-700 text-white rounded-full h-10 w-10">
+              <Plus size={20} />
+            </Button>
+          </motion.div>
+        </div>
+        <CardContent className="p-4 flex-grow flex flex-col justify-between">
+          <div>
+            <Link to={`/product/${product._id}`} className="text-decoration-none">
+              <h3 className="font-semibold text-slate-200 leading-snug truncate group-hover:text-blue-400 transition-colors">
+                {product.name}
+              </h3>
+            </Link>
+            <div className="text-xs text-slate-400 mt-2">
+              <span>{product.rating} ★</span>
+              <span className="text-slate-600 mx-1.5">|</span>
+              <span>{product.numReviews} Reviews</span>
             </div>
-          </Link>
-        </CardHeader>
-        <CardContent className="p-4 flex-grow">
-          <Link to={`/product/${product._id}`} className="text-decoration-none">
-            <h3 className="text-base font-semibold text-slate-800 leading-snug truncate hover:underline">
-              {product.name}
-            </h3>
-          </Link>
-        </CardContent>
-        <CardFooter className="p-4 pt-0 flex justify-between items-center">
-          <p className="text-lg font-bold text-slate-900">${product.price}</p>
-          <div className="text-xs text-slate-500">
-            <span>{product.rating} ★</span>
-            <span className="text-slate-300 mx-1">|</span>
-            <span>{product.numReviews}</span>
           </div>
-        </CardFooter>
+          <p className="text-xl font-bold text-white mt-4">${product.price}</p>
+        </CardContent>
       </Card>
     </motion.div>
   );
