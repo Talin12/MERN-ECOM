@@ -1,31 +1,94 @@
 import React, { useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { Row, Col, ListGroup, Image, Card } from 'react-bootstrap';
+import { Row, Col, ListGroup, Image, Card, Button } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
+import { PayPalButtons, usePayPalScriptReducer } from '@paypal/react-paypal-js';
 import Message from '../components/Message';
 import Loader from '../components/Loader';
-import { getOrderDetails } from '../redux/orderSlice';
+import { getOrderDetails, payOrder, resetOrder } from '../redux/orderSlice';
+import axios from 'axios';
 
 const OrderPage = () => {
   const { id: orderId } = useParams();
   const dispatch = useDispatch();
 
-  const { order, loading, error } = useSelector((state) => state.order);
+  const {
+    order,
+    loading,
+    error,
+    successPay,
+    loadingPay,
+  } = useSelector((state) => state.order);
+
+  const [{ isPending }, paypalDispatch] = usePayPalScriptReducer();
 
   useEffect(() => {
-    dispatch(getOrderDetails(orderId));
-  }, [orderId, dispatch]);
+    const loadPaypalScript = async () => {
+        try {
+            const { data: clientId } = await axios.get('/api/orders/config/paypal');
+            paypalDispatch({
+                type: 'resetOptions',
+                value: {
+                'client-id': clientId.clientId,
+                currency: 'USD',
+                },
+            });
+            paypalDispatch({ type: 'setLoadingStatus', value: 'pending' });
+        } catch (error) {
+            console.error("Could not load the PayPal script", error);
+        }
+    };
+
+    if (!order || successPay || order._id !== orderId) {
+        dispatch(resetOrder());
+        dispatch(getOrderDetails(orderId));
+    } else if (!order.isPaid) {
+        if (!window.paypal) {
+            loadPaypalScript();
+        }
+    }
+  }, [order, orderId, dispatch, successPay, paypalDispatch]);
+
+  function onApprove(data, actions) {
+    return actions.order.capture().then(async function (details) {
+      try {
+        dispatch(payOrder({ orderId, paymentResult: details }));
+      } catch (err) {
+        console.error('Payment failed to process:', err);
+      }
+    });
+  }
+
+  function onError(err) {
+    console.error('PayPal Checkout onError', err);
+  }
+
+  function createOrder(data, actions) {
+    return actions.order
+      .create({
+        purchase_units: [
+          {
+            amount: {
+              value: order.totalPrice,
+            },
+          },
+        ],
+      })
+      .then((orderID) => {
+        return orderID;
+      });
+  }
 
   return loading ? (
     <Loader />
   ) : error ? (
-    <Message variant="danger">{error}</Message>
-  ) : (
+    <Message variant='danger'>{error}</Message>
+  ) : order ? (
     <>
       <h1>Order {order._id}</h1>
       <Row>
         <Col md={8}>
-          <ListGroup variant="flush">
+          <ListGroup variant='flush'>
             <ListGroup.Item>
               <h2>Shipping</h2>
               <p>
@@ -42,11 +105,11 @@ const OrderPage = () => {
                 {order.shippingAddress.country}
               </p>
               {order.isDelivered ? (
-                <Message variant="success">
+                <Message variant='success'>
                   Delivered on {order.deliveredAt}
                 </Message>
               ) : (
-                <Message variant="danger">Not Delivered</Message>
+                <Message variant='danger'>Not Delivered</Message>
               )}
             </ListGroup.Item>
 
@@ -57,9 +120,9 @@ const OrderPage = () => {
                 {order.paymentMethod}
               </p>
               {order.isPaid ? (
-                <Message variant="success">Paid on {order.paidAt}</Message>
+                <Message variant='success'>Paid on {order.paidAt}</Message>
               ) : (
-                <Message variant="danger">Not Paid</Message>
+                <Message variant='danger'>Not Paid</Message>
               )}
             </ListGroup.Item>
 
@@ -68,7 +131,7 @@ const OrderPage = () => {
               {order.orderItems.length === 0 ? (
                 <Message>Order is empty</Message>
               ) : (
-                <ListGroup variant="flush">
+                <ListGroup variant='flush'>
                   {order.orderItems.map((item, index) => (
                     <ListGroup.Item key={index}>
                       <Row>
@@ -98,7 +161,7 @@ const OrderPage = () => {
         </Col>
         <Col md={4}>
           <Card>
-            <ListGroup variant="flush">
+            <ListGroup variant='flush'>
               <ListGroup.Item>
                 <h2>Order Summary</h2>
               </ListGroup.Item>
@@ -126,12 +189,28 @@ const OrderPage = () => {
                   <Col>${order.totalPrice}</Col>
                 </Row>
               </ListGroup.Item>
+              {!order.isPaid && (
+                <ListGroup.Item>
+                  {loadingPay && <Loader />}
+                  {isPending ? (
+                    <Loader />
+                  ) : (
+                    <div>
+                      <PayPalButtons
+                        createOrder={createOrder}
+                        onApprove={onApprove}
+                        onError={onError}
+                      ></PayPalButtons>
+                    </div>
+                  )}
+                </ListGroup.Item>
+              )}
             </ListGroup>
           </Card>
         </Col>
       </Row>
     </>
-  );
+  ) : null;
 };
 
 export default OrderPage;

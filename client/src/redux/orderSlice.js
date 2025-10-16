@@ -6,7 +6,10 @@ const initialState = {
   error: null,
   order: null,
   success: false,
-  myOrders: [], // Add myOrders to the initial state
+  myOrders: [], 
+  loadingPay: false,
+  successPay: false,
+  errorPay: null,
 };
 
 export const createOrder = createAsyncThunk(
@@ -44,7 +47,7 @@ export const getOrderDetails = createAsyncThunk(
   }
 );
 
-// New async thunk to get user's orders
+
 export const getMyOrders = createAsyncThunk(
   'order/getMyOrders',
   async (_, { getState, rejectWithValue }) => {
@@ -60,6 +63,30 @@ export const getMyOrders = createAsyncThunk(
   }
 );
 
+export const payOrder = createAsyncThunk(
+  'order/payOrder',
+  async ({ orderId, paymentResult }, { getState, rejectWithValue }) => {
+    try {
+      const {
+        auth: { userInfo },
+      } = getState();
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      };
+      const { data } = await axios.put(
+        `/api/orders/${orderId}/pay`,
+        paymentResult,
+        config
+      );
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || error.message);
+    }
+  }
+);
+
 const orderSlice = createSlice({
   name: 'order',
   initialState,
@@ -68,6 +95,9 @@ const orderSlice = createSlice({
       state.loading = false;
       state.success = false;
       state.error = null;
+      state.loadingPay = false;
+      state.successPay = false;
+      state.errorPay = null;
     },
   },
   extraReducers(builder) {
@@ -106,6 +136,17 @@ const orderSlice = createSlice({
       .addCase(getMyOrders.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+      })
+      .addCase(payOrder.pending, (state) => {
+        state.loadingPay = true;
+      })
+      .addCase(payOrder.fulfilled, (state, action) => {
+        state.loadingPay = false;
+        state.successPay = true;
+      })
+      .addCase(payOrder.rejected, (state, action) => {
+        state.loadingPay = false;
+        state.errorPay = action.payload;
       });
   },
 });
