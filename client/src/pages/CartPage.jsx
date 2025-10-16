@@ -6,7 +6,7 @@ import { updateCartQuantity, removeFromCart } from '../redux/cartSlice.js';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Trash2, ShoppingCart } from 'lucide-react';
+import { Trash2 } from 'lucide-react';
 
 const CartPage = () => {
   const navigate = useNavigate();
@@ -43,7 +43,7 @@ const CartPage = () => {
                 <Card key={item._id} className="flex items-center p-4 bg-slate-800/50 border-slate-700 text-white">
                   <img src={item.image} alt={item.name} className="w-24 h-24 object-cover rounded-md" />
                   <div className="ml-4 flex-grow">
-                    <Link to={`/product/${item._id}`} className="font-semibold text-slate-200 hover:underline">{item.name}</Link>
+                    <Link to={`/product/${item._id}`} className="font-semibold text-slate-200 hover:underline no-underline">{item.name}</Link>
                     <div className="text-lg font-bold text-white mt-1">${item.price}</div>
                   </div>
                   <div className="flex items-center space-x-4">

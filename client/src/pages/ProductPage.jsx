@@ -28,17 +28,17 @@ const ProductPage = () => {
     navigate('/cart');
   };
 
-  if (statusDetails === 'loading') return <div className="min-h-[80vh] flex items-center justify-center"><Loader /></div>;
-  if (statusDetails === 'failed') return <Message variant="danger">{errorDetails}</Message>;
+  if (statusDetails === 'loading') return <div className="min-h-screen flex items-center justify-center"><Loader /></div>;
+  if (statusDetails === 'failed') return <div className="container mx-auto py-28"><Message variant="danger">{errorDetails}</Message></div>;
 
   return (
     product && (
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <Link to="/" className="inline-flex items-center text-slate-300 hover:text-white mb-8">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12 pt-28">
+        <Link to="/" className="inline-flex items-center text-slate-300 hover:text-white mb-8 no-underline">
           <ArrowLeft size={16} className="mr-2" />
           Go Back
         </Link>
-        <div className="grid md:grid-cols-2 gap-8">
+        <div className="grid md:grid-cols-2 gap-8 lg:gap-12">
           <motion.div initial={{ opacity: 0, x: -50 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5 }}>
             <img src={product.image} alt={product.name} className="w-full h-auto rounded-lg shadow-xl" />
           </motion.div>

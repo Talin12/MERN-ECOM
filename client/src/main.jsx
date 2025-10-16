@@ -5,8 +5,6 @@ import { Provider } from 'react-redux';
 import { PayPalScriptProvider } from '@paypal/react-paypal-js';
 import store from './redux/store';
 
-import 'bootstrap/dist/css/bootstrap.min.css';
-
 import App from './App.jsx';
 import HomePage from './pages/HomePage.jsx';
 import ProductPage from './pages/ProductPage.jsx';

@@ -34,7 +34,7 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="container mx-auto flex items-center justify-center min-h-[80vh] px-4">
+    <div className="container mx-auto flex items-center justify-center min-h-[80vh] px-4 py-12">
       <Card className="w-full max-w-md bg-slate-800/50 border-slate-700 text-white">
         <CardHeader>
           <CardTitle className="text-3xl font-bold">Sign In</CardTitle>
@@ -73,7 +73,7 @@ const LoginPage = () => {
         <CardFooter className="text-center text-sm">
           <p className="text-slate-400">
             New Customer?{' '}
-            <Link to={redirect ? `/register?redirect=${redirect}` : '/register'} className="font-medium text-blue-400 hover:text-blue-300">
+            <Link to={redirect ? `/register?redirect=${redirect}` : '/register'} className="font-medium text-blue-400 hover:text-blue-300 no-underline">
               Register
             </Link>
           </p>

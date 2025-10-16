@@ -18,7 +18,7 @@ const CheckoutSteps = ({ step1, step2, step3, step4 }) => {
           <Link
             to={step.active ? step.link : '#'}
             className={cn(
-              'text-sm font-medium transition-colors',
+              'text-sm font-medium transition-colors no-underline',
               step.active ? 'text-blue-400 hover:text-blue-300' : 'text-slate-500 pointer-events-none'
             )}
           >

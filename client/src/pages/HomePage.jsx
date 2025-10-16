@@ -37,7 +37,7 @@ const AnimatedText = ({ text, el: Wrapper = 'p', className }) => {
 };
 
 // Hero Section Component
-const HeroSection = () => {
+const HeroSection = ({ onExploreClick }) => {
   const { scrollYProgress } = useScroll();
   const y = useTransform(scrollYProgress, [0, 1], ['0%', '50%']);
 
@@ -63,7 +63,11 @@ const HeroSection = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 1.8, ease: 'easeInOut' }}
         >
-          <Button size="lg" className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg text-lg group">
+          <Button 
+            size="lg" 
+            className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg text-lg group"
+            onClick={onExploreClick}
+          >
             Explore Collection <ArrowRight size={20} className="ml-2 group-hover:translate-x-1 transition-transform"/>
           </Button>
         </motion.div>
@@ -76,17 +80,26 @@ const HeroSection = () => {
 const HomePage = () => {
   const dispatch = useDispatch();
   const { products, status, error } = useSelector((state) => state.products);
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, amount: 0.1 });
+  const productsRef = useRef(null); // Create a ref for the products section
+  const isInView = useInView(productsRef, { once: true, amount: 0.1 });
 
   useEffect(() => { if (status === 'idle') { dispatch(fetchProducts()); } }, [status, dispatch]);
   const containerVariants = { hidden: {}, visible: { transition: { staggerChildren: 0.1 } } };
 
+  // Function to handle the scroll
+  const scrollToProducts = () => {
+    productsRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
   return (
     <div className="bg-slate-900 text-white">
-      <HeroSection />
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-20">
-        <motion.div ref={ref} initial={{ opacity: 0, y: 50 }} animate={isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.8 }}>
+      <HeroSection onExploreClick={scrollToProducts} />
+      <div ref={productsRef} className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+        <motion.div 
+          initial={{ opacity: 0, y: 50 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.8 }}
+        >
           <h2 className="text-4xl font-bold text-center mb-4">
             Our Products
           </h2>
