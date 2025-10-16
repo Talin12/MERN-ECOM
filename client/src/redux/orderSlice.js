@@ -6,7 +6,7 @@ const initialState = {
   error: null,
   order: null,
   success: false,
-  myOrders: [], 
+  myOrders: [],
   loadingPay: false,
   successPay: false,
   errorPay: null,
@@ -14,17 +14,9 @@ const initialState = {
 
 export const createOrder = createAsyncThunk(
   'order/createOrder',
-  async (order, { getState, rejectWithValue }) => {
+  async (order, { rejectWithValue }) => {
     try {
-      const {
-        auth: { userInfo },
-      } = getState();
-      const config = {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      };
-      const { data } = await axios.post('/api/orders', order, config);
+      const { data } = await axios.post('/api/orders', order);
       return data;
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || error.message);
@@ -34,28 +26,9 @@ export const createOrder = createAsyncThunk(
 
 export const getOrderDetails = createAsyncThunk(
   'order/getOrderDetails',
-  async (id, { getState, rejectWithValue }) => {
+  async (id, { rejectWithValue }) => {
     try {
-      const {
-        auth: { userInfo },
-      } = getState();
       const { data } = await axios.get(`/api/orders/${id}`);
-      return data;
-    } catch (error) {
-      return rejectWithValue(error.response?.data?.message || error.message);
-    }
-  }
-);
-
-
-export const getMyOrders = createAsyncThunk(
-  'order/getMyOrders',
-  async (_, { getState, rejectWithValue }) => {
-    try {
-      const {
-        auth: { userInfo },
-      } = getState();
-      const { data } = await axios.get('/api/orders/myorders');
       return data;
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || error.message);
@@ -65,21 +38,24 @@ export const getMyOrders = createAsyncThunk(
 
 export const payOrder = createAsyncThunk(
   'order/payOrder',
-  async ({ orderId, paymentResult }, { getState, rejectWithValue }) => {
+  async ({ orderId, paymentResult }, { rejectWithValue }) => {
     try {
-      const {
-        auth: { userInfo },
-      } = getState();
-      const config = {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      };
       const { data } = await axios.put(
         `/api/orders/${orderId}/pay`,
-        paymentResult,
-        config
+        paymentResult
       );
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || error.message);
+    }
+  }
+);
+
+export const getMyOrders = createAsyncThunk(
+  'order/getMyOrders',
+  async (_, { rejectWithValue }) => {
+    try {
+      const { data } = await axios.get('/api/orders/myorders');
       return data;
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || error.message);
@@ -92,13 +68,13 @@ const orderSlice = createSlice({
   initialState,
   reducers: {
     resetOrder: (state) => {
-      state.loading = false;
       state.success = false;
-      state.error = null;
+    },
+    resetPay: (state) => {
       state.loadingPay = false;
       state.successPay = false;
       state.errorPay = null;
-    },
+    }
   },
   extraReducers(builder) {
     builder
@@ -125,7 +101,17 @@ const orderSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       })
-      // Cases for getting user's orders
+      .addCase(payOrder.pending, (state) => {
+        state.loadingPay = true;
+      })
+      .addCase(payOrder.fulfilled, (state) => {
+        state.loadingPay = false;
+        state.successPay = true;
+      })
+      .addCase(payOrder.rejected, (state, action) => {
+        state.loadingPay = false;
+        state.errorPay = action.payload;
+      })
       .addCase(getMyOrders.pending, (state) => {
         state.loading = true;
       })
@@ -136,20 +122,9 @@ const orderSlice = createSlice({
       .addCase(getMyOrders.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
-      })
-      .addCase(payOrder.pending, (state) => {
-        state.loadingPay = true;
-      })
-      .addCase(payOrder.fulfilled, (state, action) => {
-        state.loadingPay = false;
-        state.successPay = true;
-      })
-      .addCase(payOrder.rejected, (state, action) => {
-        state.loadingPay = false;
-        state.errorPay = action.payload;
       });
   },
 });
 
-export const { resetOrder } = orderSlice.actions;
+export const { resetOrder, resetPay } = orderSlice.actions;
 export default orderSlice.reducer;
