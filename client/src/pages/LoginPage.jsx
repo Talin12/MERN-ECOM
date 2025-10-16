@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Form, Button, Row, Col } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import Loader from '../components/Loader.jsx';
 import Message from '../components/Message.jsx';
-import FormContainer from '../components/FormContainer.jsx'; // We will create this next
+import FormContainer from '../components/FormContainer.jsx';
 import { login } from '../redux/authSlice.js';
 
 const LoginPage = () => {
@@ -16,12 +16,15 @@ const LoginPage = () => {
 
   const { userInfo, status, error } = useSelector((state) => state.auth);
 
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const redirect = searchParams.get('redirect') || '/';
+
   useEffect(() => {
-    // If user is already logged in, redirect to homepage
     if (userInfo) {
-      navigate('/');
+      navigate(redirect);
     }
-  }, [navigate, userInfo]);
+  }, [navigate, userInfo, redirect]);
 
   const submitHandler = (e) => {
     e.preventDefault();
@@ -61,7 +64,10 @@ const LoginPage = () => {
 
       <Row className="py-3">
         <Col>
-          New Customer? <Link to="/register">Register</Link>
+          New Customer?{' '}
+          <Link to={redirect ? `/register?redirect=${redirect}` : '/register'}>
+            Register
+          </Link>
         </Col>
       </Row>
     </FormContainer>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Form, Button, Row, Col } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import Loader from '../components/Loader.jsx';
@@ -19,11 +19,15 @@ const RegisterPage = () => {
 
   const { userInfo, status, error } = useSelector((state) => state.auth);
 
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const redirect = searchParams.get('redirect') || '/';
+
   useEffect(() => {
     if (userInfo) {
-      navigate('/');
+      navigate(redirect);
     }
-  }, [navigate, userInfo]);
+  }, [navigate, userInfo, redirect]);
 
   const submitHandler = (e) => {
     e.preventDefault();
@@ -88,7 +92,10 @@ const RegisterPage = () => {
 
       <Row className="py-3">
         <Col>
-          Have an Account? <Link to="/login">Login</Link>
+          Have an Account?{' '}
+          <Link to={redirect ? `/login?redirect=${redirect}` : '/login'}>
+            Login
+          </Link>
         </Col>
       </Row>
     </FormContainer>
